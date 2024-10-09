@@ -31,7 +31,7 @@ import java.io.IOException;
 public class RegistroActivityViewModel extends AndroidViewModel {
     private Context context;
     private MutableLiveData<Usuario> mUsuario;
-    private MutableLiveData<Bitmap> mFoto;
+    private MutableLiveData<Bitmap> myFoto;
     private MutableLiveData<String> registroError = new MutableLiveData<>(); // defino variable error de mis textview NO OLVIDAR TAMPOCO, SINO NO FUNCIONA MIS TOAST
 
     public RegistroActivityViewModel(@NonNull Application application) {
@@ -46,10 +46,10 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     }
 
     public LiveData<Bitmap> getMFoto() {
-        if(mFoto == null){
-            mFoto = new MutableLiveData<>();
+        if(myFoto == null){
+            myFoto = new MutableLiveData<>();
         }
-        return mFoto;
+        return myFoto;
     }
 
     public LiveData<String> getRegistroError() { // manejo error de textview
@@ -57,16 +57,16 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     }
 
     public void LeerUsuario(){
-        Usuario u = ApiCliente.leer(context);
-        if( u != null) {
-            mUsuario.setValue(u);
+        Usuario user = ApiCliente.leer(context);
+        if( user != null) {
+            mUsuario.setValue(user);
         }
     }
 
     public void GuardarUsuario(String dni, String apellido, String nombre, String email, String password) {
         if (areFieldsValid(dni, apellido, nombre, email, password)) {  // Validamos los campos antes de guardar
-            Usuario u = new Usuario(Long.parseLong(dni), apellido, nombre, email, password);
-            ApiCliente.guardar(context, u);
+            Usuario user = new Usuario(Long.parseLong(dni), apellido, nombre, email, password);
+            ApiCliente.guardar(context, user);
             Intent intent = new Intent(context, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
@@ -76,7 +76,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     }
 
     private boolean areFieldsValid(String dni, String apellido, String nombre, String email, String password) {
-        // Verificar que los campos no estén vacíos
+        // Verificar que los campos no esten vacios
         return !dni.trim().isEmpty() &&
                 !apellido.trim().isEmpty() &&
                 !nombre.trim().isEmpty() &&
@@ -95,7 +95,7 @@ public class RegistroActivityViewModel extends AndroidViewModel {
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
 
             //Rutina para convertir a un arreglo de byte los datos de la imagen
-            byte [] b = baos.toByteArray();
+            byte [] by = baos.toByteArray();
 
             File archivo = new File(context.getFilesDir(), "foto.png");
             if(archivo.exists()){
@@ -105,13 +105,13 @@ public class RegistroActivityViewModel extends AndroidViewModel {
             try{
                 FileOutputStream fos = new FileOutputStream(archivo);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
-                bos.write(b);
+                bos.write(by);
                 bos.flush();
                 bos.close();
             } catch (IOException e){
                 e.printStackTrace();
             }
-            mFoto.setValue(imageBitmap);
+            myFoto.setValue(imageBitmap);
         }
     }
 
@@ -123,12 +123,12 @@ public class RegistroActivityViewModel extends AndroidViewModel {
             BufferedInputStream bis = new BufferedInputStream(fis);
             //ObjectInputStream ois = new ObjectInputStream(bis);
 
-            byte b[];
-            b = new byte[bis.available()];
-            bis.read(b);
+            byte by[];
+            by = new byte[bis.available()];
+            bis.read(by);
 
-            Bitmap bm = BitmapFactory.decodeByteArray(b, 0, b.length);
-            mFoto.setValue(bm);
+            Bitmap bm = BitmapFactory.decodeByteArray(by, 0, by.length);
+            myFoto.setValue(bm);
 
             bis.close();
             fis.close();

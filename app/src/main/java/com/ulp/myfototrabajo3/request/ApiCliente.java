@@ -34,7 +34,7 @@ public class ApiCliente implements Serializable { // NO OLVIDAR COLOCAR SIEMPRE 
             Toast.makeText(context,"Error al guardar", Toast.LENGTH_LONG).show();
         } catch (IOException io){
             io.printStackTrace();
-            Toast.makeText(context,"Error de E/S "+io.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"Error de Entrada/Salida "+io.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -57,7 +57,7 @@ public class ApiCliente implements Serializable { // NO OLVIDAR COLOCAR SIEMPRE 
         } catch (ClassNotFoundException e) {
             Toast.makeText(context,"Error de Clase",Toast.LENGTH_LONG).show();
         } catch (IOException io) {
-            Toast.makeText(context, "Error de E/S", Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "Error de Entrada/Salida", Toast.LENGTH_LONG).show();
         }
         return usuario;
     }

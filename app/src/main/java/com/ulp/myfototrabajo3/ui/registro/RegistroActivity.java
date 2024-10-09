@@ -6,17 +6,16 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.ulp.myfototrabajo3.R;
+
 import com.ulp.myfototrabajo3.databinding.ActivityRegistroBinding;
 import com.ulp.myfototrabajo3.model.Usuario;
 
@@ -32,7 +31,7 @@ public class RegistroActivity extends AppCompatActivity {
         vm = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(RegistroActivityViewModel.class);
         vm.getMUsuario().observe(this, new Observer<Usuario>() {
             @Override
-            public void onChanged(Usuario usuario) {
+            public void onChanged(Usuario usuario) {  /// confundida si va o no aqui, tercer intento, VER ESTO
                 if (usuario != null){
                     binding.etDni.setText(String.valueOf(usuario.getDni()));
                     binding.etApellido.setText(usuario.getApellido());
@@ -57,8 +56,8 @@ public class RegistroActivity extends AppCompatActivity {
                         binding.etApellido.getText().toString(),
                         binding.etNombre.getText().toString(),
                         binding.etEmail.getText().toString(),
-                        binding.etPassword.getText().toString()                )
-                ;
+                        binding.etPassword.getText().toString()
+                );
             }
         });
 
@@ -68,6 +67,11 @@ public class RegistroActivity extends AppCompatActivity {
                 binding.ivFoto.setImageBitmap(bitmap);
             }
         });
+
+        // Observador para mensajes de error
+        vm.getRegistroError().observe(this, errorMessage -> {
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+        });  // TRABAJA CON EL ERROR DEL REGISTRO
 
         binding.btSacarFoto.setOnClickListener(new View.OnClickListener() {
             @Override

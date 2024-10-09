@@ -32,6 +32,8 @@ public class RegistroActivityViewModel extends AndroidViewModel {
     private Context context;
     private MutableLiveData<Usuario> mUsuario;
     private MutableLiveData<Bitmap> mFoto;
+    private MutableLiveData<String> registroError = new MutableLiveData<>(); // defino variable error de mis textview NO OLVIDAR TAMPOCO, SINO NO FUNCIONA MIS TOAST
+
     public RegistroActivityViewModel(@NonNull Application application) {
         super(application);
         context = application.getApplicationContext();
@@ -50,6 +52,10 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         return mFoto;
     }
 
+    public LiveData<String> getRegistroError() { // manejo error de textview
+        return registroError;
+    }
+
     public void LeerUsuario(){
         Usuario u = ApiCliente.leer(context);
         if( u != null) {
@@ -57,12 +63,25 @@ public class RegistroActivityViewModel extends AndroidViewModel {
         }
     }
 
-    public void GuardarUsuario(String dni, String apellido, String nombre, String email, String password){
-        Usuario u = new Usuario(Long.parseLong(dni), apellido, nombre, email, password);
-        ApiCliente.guardar(context, u);
-        Intent intent = new Intent(context, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public void GuardarUsuario(String dni, String apellido, String nombre, String email, String password) {
+        if (areFieldsValid(dni, apellido, nombre, email, password)) {  // Validamos los campos antes de guardar
+            Usuario u = new Usuario(Long.parseLong(dni), apellido, nombre, email, password);
+            ApiCliente.guardar(context, u);
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        } else {
+            registroError.setValue("Todos los campos son obligatorios");  // Mostrar error si faltan campos
+        }
+    }
+
+    private boolean areFieldsValid(String dni, String apellido, String nombre, String email, String password) {
+        // Verificar que los campos no estén vacíos
+        return !dni.trim().isEmpty() &&
+                !apellido.trim().isEmpty() &&
+                !nombre.trim().isEmpty() &&
+                !email.trim().isEmpty() &&
+                !password.trim().isEmpty();
     }
 
     public void respuestaCamara(int requestCode, int resultCode, @Nullable Intent data, int REQUEST_IMAGE_CAPTURE){
